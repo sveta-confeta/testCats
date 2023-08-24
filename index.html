@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Тестовое задание</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        html,
+        body,
+        figure{
+            margin: 0;
+            padding: 0;
+        }
+     
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(180deg, rgba(224, 224, 224, 0.80) 0%, rgba(141, 241, 255, 0.64) 87.50%), #DF9BFF;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .gallery {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .gallery__item--big figcaption {
+            font-size: 24px;
+            margin-bottom: 34px;
+        }
+        .gallery__item--big figure {
+            margin-bottom: 25px;
+        }
+
+        .gallery__item-img-wrap img{
+            object-fit: cover;
+        }
+
+        .gallery__info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .gallery__item input {
+            border: none;
+            background: transparent;
+            display: block;
+        }
+        .gallery__item input:focus {
+            border: none;
+            outline: none;
+            border-bottom: 1px solid #000;
+        }
+        .gallery__info--big input {
+            font-size: 17px;
+        }
+        .gallery__info--big span {
+            font-size: 19px;
+        }
+        .gallery__info--big {
+            margin-bottom: 53px;
+        }
+        .gallery__items-group {
+            display: flex;
+            justify-content: space-between;
+        }
+        .gallery__item--small figcaption{
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        .gallery__item--small figure {
+            margin-bottom: 8px;
+        }
+        .gallery__info--small span {
+            font-size: 10px;
+        }
+        .gallery__info--small input {
+            font-size: 9px;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const catImages = document.querySelectorAll('.gallery__item-img-wrap img');
+            const catTextInput = document.querySelectorAll('.cat-text-input');
+            const originalSizeElements = document.querySelectorAll('.gallery__info span');
+
+            const updateCatImage = (img, newText, sizeElement) => {
+                const imageUrl = `https://cataas.com/cat/says/${newText}`;
+
+                fetch(imageUrl)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        img.src = URL.createObjectURL(blob);
+                    })
+                    .catch(error => console.error('An error occurred:', error));
+
+                img.onload = () => {
+                    sizeElement.textContent = `${img.naturalWidth} x ${img.naturalHeight}`;
+                };
+            };
+
+            const inputState = {};
+
+            catTextInput.forEach((input, index) => {
+                const img = catImages[index];
+                const sizeElement = originalSizeElements[index];
+                const originalText = input.value;
+
+                updateCatImage(img, originalText, sizeElement);
+                inputState[index] = originalText;
+
+                input.addEventListener('change', () => {
+                    inputState[index] = input.value;
+                    updateCatImage(img, inputState[index], sizeElement);
+                });
+                input.addEventListener('blur', () => {
+                    inputState[index] = input.value;
+                    updateCatImage(img, inputState[index], sizeElement);
+                });
+            });
+
+            document.addEventListener('click', (event) => {
+                if(!event.target.closest('body')){
+                    catTextInput.forEach((input, index) => {
+                        const img = catImages[index];
+                        const sizeElement = originalSizeElements[index];
+
+                        if (!input.contains(event.target)) {
+                            updateCatImage(img, inputState[index], sizeElement);
+                        }
+                    });
+                }
+
+            });
+        });
+    </script>
+
+</head>
+
+<body>
+
+<main class="gallery">
+    <div class="gallery__item gallery__item--big">
+        <figure>
+            <figcaption>Main Cat</figcaption>
+            <div class="gallery__item-img-wrap">
+                <img src="https://proprikol.ru/wp-content/uploads/2020/08/krasivye-kartinki-kotov-37.jpg" alt="photo of a cat" width="600" height="384">
+            </div>
+        </figure>
+        <div class="gallery__info gallery__info--big">
+            <input class="cat-text-input" type="text" id="main-cat" value="hello" />
+            <span>300 x 200</span>
+        </div>
+    </div>
+
+    <div class="gallery__items-group">
+        <div class="gallery__item gallery__item--small">
+            <figure>
+                <figcaption>Small cat</figcaption>
+                <div class="gallery__item-img-wrap">
+                    <img src="https://proprikol.ru/wp-content/uploads/2020/08/krasivye-kartinki-kotov-37.jpg" alt="photo of a cat" width="288" height="192">
+                </div>
+            </figure>
+            <div class="gallery__info gallery__info--small">
+                <input class="cat-text-input" id="small-cat" type="text" value="prupru" />
+                <span>200 x 100</span>
+            </div>
+        </div>
+        <div class="gallery__item gallery__item--small">
+            <figure>
+                <figcaption>Another small cat</figcaption>
+                <div class="gallery__item-img-wrap">
+                    <img src="https://proprikol.ru/wp-content/uploads/2020/08/krasivye-kartinki-kotov-37.jpg" alt="photo of a cat" width="288" height="192">
+                </div>
+            </figure>
+            <div class="gallery__info gallery__info--small">
+                <input class="cat-text-input" id="another-cat" type="text" value="meow" />
+                <span>200 x 100</span>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>
